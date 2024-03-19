@@ -134,7 +134,8 @@ def build_dataset(is_train, config):
         else:
             ann_file = prefix + "_map_val.txt"
         dataset = IN22KDATASET(config.DATA.DATA_PATH, ann_file, transform)
-        nb_classes = 21841
+        # nb_classes = 21841
+        nb_classes = 14
     else:
         raise NotImplementedError("We only support ImageNet Now.")
 
