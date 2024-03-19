@@ -14,5 +14,6 @@ MODEL:
     MLP_RATIO: 4.0
     DOWNSAMPLE: "v3"
     PATCHEMBED: "v2"
-
+DATA:
+  DATASET: imagenet22K
 # 89.0 + 15.2 + 118min/e + 48G
