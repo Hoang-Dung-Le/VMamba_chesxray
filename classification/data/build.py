@@ -74,6 +74,8 @@ def build_loader(config):
         drop_last=True,
     )
 
+    print(data_loader_train[0].shape)
+
     data_loader_val = torch.utils.data.DataLoader(
         dataset_val, sampler=sampler_val,
         batch_size=config.DATA.BATCH_SIZE,
