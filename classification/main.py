@@ -244,7 +244,8 @@ def train_one_epoch(config, model, criterion, data_loader, optimizer, epoch, mix
 
         with torch.cuda.amp.autocast(enabled=config.AMP_ENABLE):
             outputs = model(samples)
-        print(outputs.shape, targets.shape)
+        print(outputs)
+        print(targets)
         loss = criterion(outputs, targets)
         loss = loss / config.TRAIN.ACCUMULATION_STEPS
 
