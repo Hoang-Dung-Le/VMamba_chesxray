@@ -61,6 +61,7 @@ class   IN22KDATASET(data.Dataset):
                  pretraining=False):
         self.img_list = []
         self.img_label = []
+        print(file)
         with open(file, "r")    as fileDescriptor:
             line = True
             while line:
