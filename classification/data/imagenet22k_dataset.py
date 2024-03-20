@@ -72,7 +72,11 @@ class   IN22KDATASET(data.Dataset):
                     imageLabel = lineItems[1:num_class + 1]
                     imageLabel = [int(i) for i in imageLabel]
                     self.img_list.append(imagePath)
+
                     self.img_label.append(imageLabel)
+        print("thong tin ve  2 list")
+        print(len(self.img_list))
+        print(self.img_label)
 
         self.augment = augment
         self.img_depth = img_depth

@@ -74,7 +74,7 @@ def build_loader(config):
         drop_last=True,
     )
 
-    print(data_loader_train[0].shape)
+    # print(data_loader_train)
 
     data_loader_val = torch.utils.data.DataLoader(
         dataset_val, sampler=sampler_val,
@@ -137,6 +137,7 @@ def build_dataset(is_train, config):
             ann_file = '/content/VMamba_chesxray/classification/data_splits/chestxray/test_official.txt'
         dataset = IN22KDATASET(config.DATA.DATA_PATH, ann_file, transform)
         # nb_classes = 21841
+        
         nb_classes = 14
     else:
         raise NotImplementedError("We only support ImageNet Now.")
