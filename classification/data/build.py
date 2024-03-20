@@ -48,7 +48,7 @@ def build_loader(config):
     print(f"rank {dist.get_rank()} successfully build train dataset")
     dataset_val, _ = build_dataset(is_train=False, config=config)
     print(f"rank {dist.get_rank()} successfully build val dataset")
-    print("dataset train: ", dataset_train.shape)
+    # print("dataset train: ", dataset_train.shape)
     num_tasks = dist.get_world_size()
     global_rank = dist.get_rank()
     if config.DATA.ZIP_MODE and config.DATA.CACHE_MODE == 'part':
