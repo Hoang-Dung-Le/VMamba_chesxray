@@ -76,7 +76,7 @@ class   IN22KDATASET(data.Dataset):
                     self.img_label.append(imageLabel)
         print("thong tin ve  2 list")
         print(len(self.img_list))
-        print(self.img_label)
+        print(len(self.img_label))
 
         self.augment = augment
         self.img_depth = img_depth
