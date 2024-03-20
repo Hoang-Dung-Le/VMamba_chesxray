@@ -61,7 +61,6 @@ class   IN22KDATASET(data.Dataset):
                  pretraining=False):
         self.img_list = []
         self.img_label = []
-        file = '/content/VMamba_chesxray/classification/data_splits/chestxray/test_official.txt'
         with open(file, "r")    as fileDescriptor:
             line = True
             while line:
