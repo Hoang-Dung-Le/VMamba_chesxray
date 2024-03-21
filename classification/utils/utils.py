@@ -64,13 +64,17 @@ def load_pretrained_ema(config, model, logger, model_ema: ModelEma=None):
         # logger.warning(msg)
         print(checkpoint.keys())
         checkpoint_state_dict = checkpoint['model']
-        model_state_dict = model.state_dict()
+        checkpoint_state_dict['classifier.head.weight'] = checkpoint_state_dict['classifier.head.weight'][:14, :]
+        checkpoint_state_dict['classifier.head.bias'] = checkpoint_state_dict['classifier.head.bias'][:14]
+
+        # model_state_dict = model.state_dict()
+        model.load_state_dict(checkpoint_state_dict, strict=False)
 
         # Filter out unnecessary keys
-        filtered_checkpoint_state_dict = {k: v for k, v in checkpoint_state_dict.items() if k in model_state_dict}
+        # filtered_checkpoint_state_dict = {k: v for k, v in checkpoint_state_dict.items() if k in model_state_dict}
 
         # Load the new state dict
-        model.load_state_dict(filtered_checkpoint_state_dict, strict=False)
+        # model.load_state_dict(filtered_checkpoint_state_dict, strict=False)
         logger.info(f"=> loaded 'model' successfully from '{config.MODEL.PRETRAINED}'")
     else:
         logger.warning(f"No 'model' found in {config.MODEL.PRETRAINED}! ")
