@@ -51,28 +51,28 @@ def build_loader(config):
     # print("dataset train: ", dataset_train.shape)
     num_tasks = dist.get_world_size()
     global_rank = dist.get_rank()
-    # if config.DATA.ZIP_MODE and config.DATA.CACHE_MODE == 'part':
-    #     indices = np.arange(dist.get_rank(), len(dataset_train), dist.get_world_size())
-    #     sampler_train = SubsetRandomSampler(indices)
-    # else:
-    #     sampler_train = torch.utils.data.DistributedSampler(
-    #         dataset_train, num_replicas=num_tasks, rank=global_rank, shuffle=True
-    #     )
+    if config.DATA.ZIP_MODE and config.DATA.CACHE_MODE == 'part':
+        indices = np.arange(dist.get_rank(), len(dataset_train), dist.get_world_size())
+        sampler_train = SubsetRandomSampler(indices)
+    else:
+        sampler_train = torch.utils.data.DistributedSampler(
+            dataset_train, num_replicas=num_tasks, rank=global_rank, shuffle=True
+        )
 
-    # if config.TEST.SEQUENTIAL:
-    #     sampler_val = torch.utils.data.SequentialSampler(dataset_val)
-    # else:
-    #     sampler_val = torch.utils.data.distributed.DistributedSampler(
-    #         dataset_val, shuffle=config.TEST.SHUFFLE
-    #     )
+    if config.TEST.SEQUENTIAL:
+        sampler_val = torch.utils.data.SequentialSampler(dataset_val)
+    else:
+        sampler_val = torch.utils.data.distributed.DistributedSampler(
+            dataset_val, shuffle=config.TEST.SHUFFLE
+        )
 
-    # data_loader_train = torch.utils.data.DataLoader(
-    #     dataset_train, sampler=sampler_train,
-    #     batch_size=config.DATA.BATCH_SIZE,
-    #     num_workers=config.DATA.NUM_WORKERS,
-    #     pin_memory=config.DATA.PIN_MEMORY,
-    #     drop_last=True,
-    # )
+    data_loader_train = torch.utils.data.DataLoader(
+        dataset_train, sampler=sampler_train,
+        batch_size=config.DATA.BATCH_SIZE,
+        num_workers=config.DATA.NUM_WORKERS,
+        pin_memory=config.DATA.PIN_MEMORY,
+        drop_last=True,
+    )
 
     # # print(data_loader_train)
 
@@ -86,24 +86,24 @@ def build_loader(config):
     # )
 
 
-    data_loader_train = torch.utils.data.DataLoader(
-        dataset_train,
-        batch_size=config.DATA.BATCH_SIZE,
-        num_workers=config.DATA.NUM_WORKERS,
-        pin_memory=config.DATA.PIN_MEMORY,
-        drop_last=True,
-    )
+    # data_loader_train = torch.utils.data.DataLoader(
+    #     dataset_train,
+    #     batch_size=config.DATA.BATCH_SIZE,
+    #     num_workers=config.DATA.NUM_WORKERS,
+    #     pin_memory=config.DATA.PIN_MEMORY,
+    #     drop_last=True,
+    # )
 
-    # print(data_loader_train)
+    # # print(data_loader_train)
 
-    data_loader_val = torch.utils.data.DataLoader(
-        dataset_val,
-        batch_size=config.DATA.BATCH_SIZE,
-        shuffle=False,
-        num_workers=config.DATA.NUM_WORKERS,
-        pin_memory=config.DATA.PIN_MEMORY,
-        drop_last=False
-    )
+    # data_loader_val = torch.utils.data.DataLoader(
+    #     dataset_val,
+    #     batch_size=config.DATA.BATCH_SIZE,
+    #     shuffle=False,
+    #     num_workers=config.DATA.NUM_WORKERS,
+    #     pin_memory=config.DATA.PIN_MEMORY,
+    #     drop_last=False
+    # )
 
     # setup mixup / cutmix
     mixup_fn = None
