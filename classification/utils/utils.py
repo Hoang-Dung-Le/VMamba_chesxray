@@ -63,7 +63,7 @@ def load_pretrained_ema(config, model, logger, model_ema: ModelEma=None):
         # msg = model.load_state_dict(checkpoint['model'], strict=False)
         # logger.warning(msg)
         print(checkpoint.keys())
-        checkpoint_state_dict = checkpoint['state_dict']
+        checkpoint_state_dict = checkpoint['model']
         model_state_dict = model.state_dict()
 
         # Filter out unnecessary keys
