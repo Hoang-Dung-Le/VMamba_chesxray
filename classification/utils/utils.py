@@ -59,20 +59,17 @@ def load_checkpoint_ema(config, model, optimizer, lr_scheduler, loss_scaler, log
 def load_pretrained_ema(config, model, logger, model_ema: ModelEma=None):
     logger.info(f"==============> Loading weight {config.MODEL.PRETRAINED} for fine-tuning......")
     checkpoint = torch.load(config.MODEL.PRETRAINED, map_location='cpu')
-    
     if 'model' in checkpoint:
         # msg = model.load_state_dict(checkpoint['model'], strict=False)
         # logger.warning(msg)
-        model_dict = model.state_dict()
-        new_checkpoint = {}
-        for name, param in checkpoint["state_dict"].items():
-            if name in model_dict:
-                new_checkpoint[name] = param
-            else:
-                print(f"Bỏ qua tham số {name} trong checkpoint.")
+        checkpoint_state_dict = checkpoint['model_state_dict']
+        model_state_dict = model.state_dict()
 
-        model.load_state_dict(new_checkpoint, strict=False)
+        # Filter out unnecessary keys
+        filtered_checkpoint_state_dict = {k: v for k, v in checkpoint_state_dict.items() if k in model_state_dict}
 
+        # Load the new state dict
+        model.load_state_dict(filtered_checkpoint_state_dict, strict=False)
         logger.info(f"=> loaded 'model' successfully from '{config.MODEL.PRETRAINED}'")
     else:
         logger.warning(f"No 'model' found in {config.MODEL.PRETRAINED}! ")
