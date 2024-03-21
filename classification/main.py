@@ -236,7 +236,7 @@ def main(config):
             return
 
     if config.MODEL.PRETRAINED and (not config.MODEL.RESUME):
-        load_pretrained_ema(config, model_without_ddp, logger, model_ema)
+        model = load_pretrained_ema(config, model_without_ddp, logger, model_ema)
         acc1, acc5, loss = validate(config, data_loader_val, model)
         logger.info(f"Accuracy of the network on the {len(dataset_val)} test images: {acc1:.1f}%")
         if model_ema is not None:
