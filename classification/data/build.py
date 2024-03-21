@@ -154,7 +154,7 @@ def build_dataset(is_train, config):
         if is_train:
             ann_file = '/content/VMamba_chesxray/classification/data_splits/chestxray/test_official.txt'
         else:
-            ann_file = '/content/VMamba_chesxray/classification/data_splits/chestxray/valid_official.txt'
+            ann_file = '/content/VMamba_chesxray/classification/data_splits/chestxray/val_official.txt'
         dataset = IN22KDATASET(config.DATA.DATA_PATH, ann_file, transform)
         # nb_classes = 21841
         
