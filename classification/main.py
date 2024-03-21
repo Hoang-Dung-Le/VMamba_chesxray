@@ -75,8 +75,8 @@ def computeAUROC(dataPRED, dataGT, classCount=14):
             # print(pred_probs)
             # Calculate ROC curve for each class
             fpr, tpr, threshold = roc_curve(dataGT[:, i], pred_probs)
-            print("fpr ", fpr)
-            print("tpr:", tpr)
+            # print("fpr ", fpr)
+            # print("tpr:", tpr)
             roc_auc = roc_auc_score(dataGT[:, i], pred_probs)
             outAUROC.append(roc_auc)
 
@@ -258,10 +258,10 @@ def main(config):
     start_time = time.time()
     for epoch in range(config.TRAIN.START_EPOCH, config.TRAIN.EPOCHS):
         data_loader_train.sampler.set_epoch(epoch)
-        print("DEBUGGGG")
-        loss = validate(config, data_loader_val, model)
-        print("loss: ", loss)
-        print("END DEBUG")
+        # print("DEBUGGGG")
+        # loss = validate(config, data_loader_val, model)
+        # print("loss: ", loss)
+        # print("END DEBUG")
         train_one_epoch(config, model, criterion, data_loader_train, optimizer, epoch, mixup_fn, lr_scheduler, loss_scaler, model_ema)
         if dist.get_rank() == 0 and (epoch % config.SAVE_FREQ == 0 or epoch == (config.TRAIN.EPOCHS - 1)):
             save_checkpoint_ema(config, epoch, model_without_ddp, max_accuracy, optimizer, lr_scheduler, loss_scaler, logger, model_ema, max_accuracy_ema)

@@ -1365,7 +1365,7 @@ class VSSM(nn.Module):
         self, 
         patch_size=4, 
         in_chans=3, 
-        num_classes=1000, 
+        num_classes=14, 
         depths=[2, 2, 9, 2], 
         dims=[96, 192, 384, 768], 
         # =========================
