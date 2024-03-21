@@ -152,7 +152,7 @@ def build_dataset(is_train, config):
     elif config.DATA.DATASET == 'imagenet22K':
         prefix = 'ILSVRC2011fall_whole'
         if is_train:
-            ann_file = '/content/VMamba_chesxray/classification/data_splits/chestxray/test_official.txt'
+            ann_file = '/content/VMamba_chesxray/classification/data_splits/chestxray/train_official.txt'
         else:
             ann_file = '/content/VMamba_chesxray/classification/data_splits/chestxray/val_official.txt'
         dataset = IN22KDATASET(config.DATA.DATA_PATH, ann_file, transform)
