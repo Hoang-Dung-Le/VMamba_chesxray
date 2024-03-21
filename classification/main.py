@@ -150,7 +150,7 @@ def main(config):
     # else:
     #     criterion = torch.nn.CrossEntropyLoss()
         
-    criterion = torch.nn.BCELoss()
+    criterion = torch.nn.BCEWithLogitsLoss()
 
     max_accuracy = 0.0
     max_accuracy_ema = 0.0
