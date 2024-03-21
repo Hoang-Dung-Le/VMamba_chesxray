@@ -238,9 +238,9 @@ def main(config):
     if config.MODEL.PRETRAINED and (not config.MODEL.RESUME):
         model = load_pretrained_ema(config, model_without_ddp, logger, model_ema)
         loss = validate(config, data_loader_val, model)
-        logger.info(f"Accuracy of the network on the {len(dataset_val)} test images: {acc1:.1f}%")
-        if model_ema is not None:
-            acc1_ema, acc5_ema, loss_ema = validate(config, data_loader_val, model_ema.ema)
+        # logger.info(f"Accuracy of the network on the {len(dataset_val)} test images: {acc1:.1f}%")
+        # if model_ema is not None:
+        #     acc1_ema, acc5_ema, loss_ema = validate(config, data_loader_val, model_ema.ema)
             # logger.info(f"Accuracy of the network ema on the {len(dataset_val)} test images: {acc1_ema:.1f}%")
         
         if config.EVAL_MODE:
@@ -258,10 +258,10 @@ def main(config):
     start_time = time.time()
     for epoch in range(config.TRAIN.START_EPOCH, config.TRAIN.EPOCHS):
         data_loader_train.sampler.set_epoch(epoch)
-        print("DEBUGGGG")
-        loss = validate(config, data_loader_val, model)
-        print("loss: ", loss)
-        print("END DEBUG")
+        # print("DEBUGGGG")
+        # loss = validate(config, data_loader_val, model)
+        # print("loss: ", loss)
+        # print("END DEBUG")
         train_one_epoch(config, model, criterion, data_loader_train, optimizer, epoch, mixup_fn, lr_scheduler, loss_scaler, model_ema)
         if dist.get_rank() == 0 and (epoch % config.SAVE_FREQ == 0 or epoch == (config.TRAIN.EPOCHS - 1)):
             save_checkpoint_ema(config, epoch, model_without_ddp, max_accuracy, optimizer, lr_scheduler, loss_scaler, logger, model_ema, max_accuracy_ema)
