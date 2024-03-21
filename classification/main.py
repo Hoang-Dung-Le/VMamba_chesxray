@@ -481,15 +481,15 @@ def validate(config, data_loader, model):
 
         # measure accuracy and record loss
         loss = criterion(output, target)
-        acc1, acc5 = accuracy(output, target, topk=(1, 5))
+        # acc1, acc5 = accuracy(output, target, topk=(1, 5))
 
-        acc1 = reduce_tensor(acc1)
-        acc5 = reduce_tensor(acc5)
+        # acc1 = reduce_tensor(acc1)
+        # acc5 = reduce_tensor(acc5)
         loss = reduce_tensor(loss)
 
         loss_meter.update(loss.item(), target.size(0))
-        acc1_meter.update(acc1.item(), target.size(0))
-        acc5_meter.update(acc5.item(), target.size(0))
+        # acc1_meter.update(acc1.item(), target.size(0))
+        # acc5_meter.update(acc5.item(), target.size(0))
 
         # Calculate ROC AUC for the current batch
         auc_batch = computeAUROC(output, target)
@@ -505,12 +505,14 @@ def validate(config, data_loader, model):
                 f'Test: [{idx}/{len(data_loader)}]\t'
                 f'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                 f'Loss {loss_meter.val:.4f} ({loss_meter.avg:.4f})\t'
-                f'Acc@1 {acc1_meter.val:.3f} ({acc1_meter.avg:.3f})\t'
-                f'Acc@5 {acc5_meter.val:.3f} ({acc5_meter.avg:.3f})\t'
+                # f'Acc@1 {acc1_meter.val:.3f} ({acc1_meter.avg:.3f})\t'
+                # f'Acc@5 {acc5_meter.val:.3f} ({acc5_meter.avg:.3f})\t'
                 f'Mem {memory_used:.0f}MB')
 
-    logger.info(f' * Acc@1 {acc1_meter.avg:.3f} Acc@5 {acc5_meter.avg:.3f} AUC {auc_meter.avg:.3f}')
-    return acc1_meter.avg, acc5_meter.avg, loss_meter.avg, auc_meter.avg
+    # logger.info(f' * Acc@1 {acc1_meter.avg:.3f} Acc@5 {acc5_meter.avg:.3f} AUC {auc_meter.avg:.3f}')
+    # logger.info(AUC {auc_meter.avg:.3f}')
+    # return acc1_meter.avg, acc5_meter.avg, loss_meter.avg, auc_meter.avg
+    return loss_meter.avg
 
 
 @torch.no_grad()
