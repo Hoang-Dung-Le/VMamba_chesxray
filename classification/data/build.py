@@ -76,14 +76,14 @@ def build_loader(config):
 
     # # print(data_loader_train)
 
-    # data_loader_val = torch.utils.data.DataLoader(
-    #     dataset_val, sampler=sampler_val,
-    #     batch_size=config.DATA.BATCH_SIZE,
-    #     shuffle=False,
-    #     num_workers=config.DATA.NUM_WORKERS,
-    #     pin_memory=config.DATA.PIN_MEMORY,
-    #     drop_last=False
-    # )
+    data_loader_val = torch.utils.data.DataLoader(
+        dataset_val, sampler=sampler_val,
+        batch_size=config.DATA.BATCH_SIZE,
+        shuffle=False,
+        num_workers=config.DATA.NUM_WORKERS,
+        pin_memory=config.DATA.PIN_MEMORY,
+        drop_last=False
+    )
 
 
     # data_loader_train = torch.utils.data.DataLoader(
