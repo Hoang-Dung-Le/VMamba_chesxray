@@ -236,8 +236,11 @@ def train_one_epoch(config, model, criterion, data_loader, optimizer, epoch, mix
     start = time.time()
     end = time.time()
     for idx, (samples, targets) in enumerate(data_loader):
-        samples = samples.cuda(non_blocking=True)
-        targets = targets.cuda(non_blocking=True)
+        # samples = samples.cuda(non_blocking=True)
+        # targets = targets.cuda(non_blocking=True)
+
+        samples = samples.cuda(non_blocking=True).half()
+        targets = targets.cuda(non_blocking=True).half()
 
         if mixup_fn is not None:
             samples, targets = mixup_fn(samples, targets)
