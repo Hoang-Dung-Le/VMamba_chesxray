@@ -75,7 +75,9 @@ def load_pretrained_ema(config, model, logger, model_ema: ModelEma=None):
 
         # Load the new state dict
         # model.load_state_dict(filtered_checkpoint_state_dict, strict=False)
+        
         logger.info(f"=> loaded 'model' successfully from '{config.MODEL.PRETRAINED}'")
+        return model
     else:
         logger.warning(f"No 'model' found in {config.MODEL.PRETRAINED}! ")
 
