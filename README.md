@@ -1,5 +1,6 @@
 **Introduction**<br>
 This project utilizes Vmamba for the chesxray dataset (multi labels), achieving a significant accuracy improvement with a ROC AUC score of 0.847 using the vssm_2020 pretrain. <br>
+![alt text](roc_auc.png)
 **Installation** <br>
 follow https://github.com/MzeroMiko/VMamba?tab=readme-ov-file#getting-started <br>
 **Getting started**
