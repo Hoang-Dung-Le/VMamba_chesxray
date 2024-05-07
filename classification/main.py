@@ -64,73 +64,93 @@ def find_best_threshold(fpr, tpr, thresholds):
     best_threshold_index = np.argmax(j_stat)
     # Return the best threshold
     return thresholds[best_threshold_index]
-
+from sklearn.metrics import f1_score
 # In your loop where you calculate ROC curve for each class:
-
-    
-def computeAUROC(dataPRED, dataGT, classCount=14):
-
-    outAUROC = []
-    fprs, tprs, thresholds = [], [], []
-    
-    for i in range(classCount):
-        try:
-            # Apply sigmoid to predictions
-            pred_probs = torch.sigmoid(torch.tensor(dataPRED[:, i]))
-            # pred_probs = dataPRED[:, i]
-            # print(pred_probs)
-            # print(pred_probs)
-            # print(dataGT[:, i].shape)
-            # print(dataGT)
-            # print("_________________________")
-            # print(pred_probs)
-            # Calculate ROC curve for each class
-            fpr, tpr, threshold = roc_curve(dataGT[:, i], pred_probs)
-            print("_________________________________________________________")
-            # print("fpr ", fpr)
-            # print("tpr:", tpr)
-            roc_auc = roc_auc_score(dataGT[:, i], pred_probs)
-            outAUROC.append(roc_auc)
-
-            # Store FPR, TPR, and thresholds for each class
-            fprs.append(fpr)
-            tprs.append(tpr)
-            thresholds.append(threshold)
-        except:
-            outAUROC.append(0.)
-
-    auc_each_class_array = np.array(outAUROC)
-
+def compute_and_evaluate_thresholds(dataPRED, dataGT, classCount=14, metric='f1'):
+    thresholds = []
     best_thresholds = []
+    best_metrics = []
+
     for i in range(classCount):
-        fpr = fprs[i]
-        tpr = tprs[i]
-        threshold = thresholds[i]
-        best_threshold = find_best_threshold(fpr, tpr, threshold)
-        best_thresholds.append(best_threshold)
-    print(best_thresholds)
+        pred_probs = torch.sigmoid(torch.tensor(dataPRED[:, i]))
+        fpr, tpr, thresholds_i = roc_curve(dataGT[:, i], pred_probs)
 
-    print("each class: ",auc_each_class_array)
-    # Average over all classes
-    result = np.average(auc_each_class_array[auc_each_class_array != 0])
-    # print(result)
-    plt.figure(figsize=(10, 8))  # Đặt kích thước hình ảnh chung
+        # Grid search for threshold tuning (adjust grid range as needed)
+        grid_values = np.linspace(0, 1, 100)
+        best_metric = 0.0
+        best_threshold_i = None
+        for threshold_val in grid_values:
+            predicted = (pred_probs > threshold_val).float()
+            # Calculate chosen metric (e.g., precision, recall, F1-score)
+            
+            metric_val = f1_score(dataGT[:, i], predicted)
+           
+            if metric_val >= best_metric:
+                best_metric = metric_val
+                best_threshold_i = threshold_val
 
-    for i in range(len(fprs)):
-        plt.plot(fprs[i], tprs[i], label=f'Class {i} (AUC = {outAUROC[i]:.2f})')
+        thresholds.append(thresholds_i)
+        best_thresholds.append(best_threshold_i)
+        best_metrics.append(best_metric)
+        print(best_thresholds)
 
-    plt.plot([0, 1], [0, 1], 'k--')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('ROC Curves for all Classes')
-    plt.legend()
+    return best_metrics
+    
+# def computeAUROC(dataPRED, dataGT, classCount=14):
 
-    output_file = f'./roc_auc.png'  # Đường dẫn lưu ảnh
+#     outAUROC = []
+#     fprs, tprs, thresholds = [], [], []
+    
+#     for i in range(classCount):
+#         try:
+#             # Apply sigmoid to predictions
+#             pred_probs = torch.sigmoid(torch.tensor(dataPRED[:, i]))
+#             # pred_probs = dataPRED[:, i]
+#             # print(pred_probs)
+#             # print(pred_probs)
+#             # print(dataGT[:, i].shape)
+#             # print(dataGT)
+#             # print("_________________________")
+#             # print(pred_probs)
+#             # Calculate ROC curve for each class
+#             fpr, tpr, threshold = roc_curve(dataGT[:, i], pred_probs)
+#             print("_________________________________________________________")
+#             # print("fpr ", fpr)
+#             # print("tpr:", tpr)
+#             roc_auc = roc_auc_score(dataGT[:, i], pred_probs)
+#             outAUROC.append(roc_auc)
 
-    # Lưu hình xuống file
-    plt.savefig(output_file)
+#             # Store FPR, TPR, and thresholds for each class
+#             fprs.append(fpr)
+#             tprs.append(tpr)
+#             thresholds.append(threshold)
+#         except:
+#             outAUROC.append(0.)
 
-    return result
+#     auc_each_class_array = np.array(outAUROC)
+
+
+#     print("each class: ",auc_each_class_array)
+#     # Average over all classes
+#     result = np.average(auc_each_class_array[auc_each_class_array != 0])
+#     # print(result)
+#     plt.figure(figsize=(10, 8))
+
+#     for i in range(len(fprs)):
+#         plt.plot(fprs[i], tprs[i], label=f'Class {i} (AUC = {outAUROC[i]:.2f})')
+
+#     plt.plot([0, 1], [0, 1], 'k--')
+#     plt.xlabel('False Positive Rate')
+#     plt.ylabel('True Positive Rate')
+#     plt.title('ROC Curves for all Classes')
+#     plt.legend()
+
+#     output_file = f'./roc_auc.png'  # Đường dẫn lưu ảnh
+
+#     # Lưu hình xuống file
+#     plt.savefig(output_file)
+
+#     return result
 
 
 def parse_option():
