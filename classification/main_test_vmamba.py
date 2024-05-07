@@ -191,7 +191,7 @@ def main(config, args):
     loss_scaler = NativeScalerWithGradNormCount()
 
     if config.TRAIN.ACCUMULATION_STEPS > 1:
-        lr_scheduler = build_scheduler(config, optimizer, 70000) // config.TRAIN.ACCUMULATION_STEPS)
+        lr_scheduler = build_scheduler(config, optimizer, 70000) // config.TRAIN.ACCUMULATION_STEPS
     else:
         lr_scheduler = build_scheduler(config, optimizer, 70000)
 
