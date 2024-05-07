@@ -57,6 +57,17 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
     
+def find_best_threshold(fpr, tpr, thresholds):
+    # Calculate the Youden's J statistic
+    j_stat = tpr - fpr
+    # Find the index of the threshold corresponding to the maximum Youden's J statistic
+    best_threshold_index = np.argmax(j_stat)
+    # Return the best threshold
+    return thresholds[best_threshold_index]
+
+# In your loop where you calculate ROC curve for each class:
+
+    
 def computeAUROC(dataPRED, dataGT, classCount=14):
 
     outAUROC = []
@@ -75,10 +86,6 @@ def computeAUROC(dataPRED, dataGT, classCount=14):
             # print(pred_probs)
             # Calculate ROC curve for each class
             fpr, tpr, threshold = roc_curve(dataGT[:, i], pred_probs)
-            print(fpr)
-            print(tpr)
-            print(threshold)
-
             print("_________________________________________________________")
             # print("fpr ", fpr)
             # print("tpr:", tpr)
@@ -93,6 +100,15 @@ def computeAUROC(dataPRED, dataGT, classCount=14):
             outAUROC.append(0.)
 
     auc_each_class_array = np.array(outAUROC)
+
+    best_thresholds = []
+    for i in range(classCount):
+        fpr = fprs[i]
+        tpr = tprs[i]
+        threshold = thresholds[i]
+        best_threshold = find_best_threshold(fpr, tpr, threshold)
+        best_thresholds.append(best_threshold)
+    print(best_thresholds)
 
     print("each class: ",auc_each_class_array)
     # Average over all classes
