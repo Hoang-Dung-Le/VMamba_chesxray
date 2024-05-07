@@ -66,7 +66,7 @@ def find_best_threshold(fpr, tpr, thresholds):
     return thresholds[best_threshold_index]
 from sklearn.metrics import f1_score
 # In your loop where you calculate ROC curve for each class:
-def compute_and_evaluate_thresholds(dataPRED, dataGT, classCount=14, metric='f1'):
+def computeAUROC(dataPRED, dataGT, classCount=14, metric='f1'):
     thresholds = []
     best_thresholds = []
     best_metrics = []
