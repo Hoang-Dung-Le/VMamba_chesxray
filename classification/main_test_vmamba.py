@@ -454,15 +454,39 @@ from PIL import Image
 from transform_data import get_transform
 @torch.no_grad()
 def predict_img(config, path_to_img, model):
-    model.eval()
+    """Predicts the class of an image using the specified model.
+
+    Args:
+        config: Configuration dictionary containing model parameters.
+        path_to_img: Path to the image file.
+        model: PyTorch model for prediction.
+
+    Returns:
+        A tensor containing the predicted probabilities for each class.
+    """
+
+    model.eval()  # Set model to evaluation mode
+
+    # Check if GPU is available
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    # Read and preprocess image
     image = Image.open(path_to_img).convert('RGB')
     transform = get_transform(config)
     processed_image = transform(image)
     processed_tensor = processed_image.unsqueeze(0)
-    with torch.no_grad():  # Disable gradient calculation for inference
-            predictions = model(processed_tensor)
+
+    # Move data to GPU if available
+    processed_tensor = processed_tensor.to(device)
+
+    # Disable gradient calculation for inference
+    with torch.no_grad():
+        predictions = model(processed_tensor)
+
+    # Apply sigmoid activation if necessary (depending on model output)
     pred_prob = torch.sigmoid(predictions)
-    print(pred_prob)
+
+    return pred_prob
     
 
     
