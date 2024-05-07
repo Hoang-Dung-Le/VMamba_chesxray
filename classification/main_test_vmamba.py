@@ -128,6 +128,7 @@ def parse_option():
     )
 
     # easy config modification
+    parser.add_argument('--path_to_img', type=str, help="img predict")
     parser.add_argument('--batch-size', type=int, help="batch size for single GPU")
     parser.add_argument('--data-path', type=str, help='path to dataset')
     parser.add_argument('--zip', action='store_true', help='use zipped dataset instead of folder dataset')
@@ -165,21 +166,11 @@ def parse_option():
     return args, config
 
 
-def main(config):
-    dataset_train, dataset_val, data_loader_train, data_loader_val, mixup_fn = build_loader(config)
+def main(config, args):
+    # dataset_train, dataset_val, data_loader_train, data_loader_val, mixup_fn = build_loader(config)
 
     logger.info(f"Creating model:{config.MODEL.TYPE}/{config.MODEL.NAME}")
     model = build_model(config)
-    
-    if dist.get_rank() == 0:
-        if hasattr(model, 'flops'):
-            logger.info(str(model))
-            n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
-            logger.info(f"number of params: {n_parameters}")
-            flops = model.flops()
-            logger.info(f"number of GFLOPs: {flops / 1e9}")
-        else:
-            logger.info(flop_count_str(FlopCountAnalysis(model, (dataset_val[0][0][None],))))
 
     model.cuda()
     model_without_ddp = model
@@ -200,9 +191,9 @@ def main(config):
     loss_scaler = NativeScalerWithGradNormCount()
 
     if config.TRAIN.ACCUMULATION_STEPS > 1:
-        lr_scheduler = build_scheduler(config, optimizer, len(data_loader_train) // config.TRAIN.ACCUMULATION_STEPS)
+        lr_scheduler = build_scheduler(config, optimizer, len(70000) // config.TRAIN.ACCUMULATION_STEPS)
     else:
-        lr_scheduler = build_scheduler(config, optimizer, len(data_loader_train))
+        lr_scheduler = build_scheduler(config, optimizer, len(70000))
 
     # if config.AUG.MIXUP > 0.:
     #     # smoothing is handled with mixup label transform
@@ -231,13 +222,16 @@ def main(config):
 
     if config.MODEL.RESUME:
         max_accuracy, max_accuracy_ema = load_checkpoint_ema(config, model_without_ddp, optimizer, lr_scheduler, loss_scaler, logger, model_ema)
-        loss = validate(config, data_loader_val, model)
-        if model_ema is not None:
-            loss_ema = validate(config, data_loader_val, model_ema.ema)
+        # loss = validate(config, data_loader_val, model)
+        
+        predict_img(config, args.path_to_img, model)
+        return
+        # if model_ema is not None:
+        #     loss_ema = validate(config, data_loader_val, model_ema.ema)
             # logger.info(f"Accuracy of the network ema on the {len(dataset_val)} test images: {acc1_ema:.1f}%")
 
-        if config.EVAL_MODE:
-            return
+        # if config.EVAL_MODE:
+        #     return
 
     if config.MODEL.PRETRAINED and (not config.MODEL.RESUME):
         model = load_pretrained_ema(config, model_without_ddp, logger, model_ema)
@@ -456,7 +450,23 @@ def validate(config, data_loader, model):
     # logger.info(f' * Acc@1 {acc1_meter.avg:.3f} Acc@5 {acc5_meter.avg:.3f} ROC AUC {auc_result:.3f}')
     print("ROC AUC", auc_result)
     return loss_meter.avg
+from PIL import Image
+from transform_data import get_transform
+@torch.no_grad()
+def predict_img(config, path_to_img, model):
+    model.eval()
+    image = Image.open(path_to_img).convert('RGB')
+    transform = get_transform(config)
+    processed_image = transform(image)
+    processed_tensor = processed_image.unsqueeze(0)
+    with torch.no_grad():  # Disable gradient calculation for inference
+            predictions = model(processed_tensor)
+    pred_prob = torch.sigmoid(predictions)
+    print(pred_prob)
+    
 
+    
+    return None
 # @torch.no_grad()
 # def validate(config, data_loader, model):
 #     criterion = torch.nn.CrossEntropyLoss()
@@ -602,4 +612,4 @@ if __name__ == '__main__':
         usable_memory = torch.cuda.get_device_properties(0).total_memory * args.memory_limit_rate / 1e6
         print(f"===========> GPU memory is limited to {usable_memory}MB", flush=True)
 
-    main(config)
+    main(config, args)
