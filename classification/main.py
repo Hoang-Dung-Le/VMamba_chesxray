@@ -102,12 +102,11 @@ def computeAUROC(dataPRED, dataGT):
         # Tính toán ROC curve
         pred_probs = torch.sigmoid(torch.tensor(dataPRED[:, i]))
         fpr, tpr, threshold = roc_curve(dataGT[:, i], pred_probs)
-        # Tìm điểm trên ROC curve gần với (0,1)
-        # Có thể làm điều này bằng cách chọn điểm có giá trị (1 - TPR) nhỏ nhất
-        # và FPR thấp nhất
         optimal_index = np.argmax(tpr - fpr)
         optimal_threshold = threshold[optimal_index]
+        print("Threshold value is:", optimal_threshold)
         thresholds.append(optimal_threshold)
+        print("______________-")
     return thresholds
     
 # def computeAUROC(dataPRED, dataGT, classCount=14):
