@@ -66,35 +66,49 @@ def find_best_threshold(fpr, tpr, thresholds):
     return thresholds[best_threshold_index]
 from sklearn.metrics import f1_score
 # In your loop where you calculate ROC curve for each class:
-def computeAUROC(dataPRED, dataGT, classCount=14, metric='f1'):
-    thresholds = []
-    best_thresholds = []
-    best_metrics = []
+# def computeAUROC(dataPRED, dataGT, classCount=14, metric='f1'):
+#     thresholds = []
+#     best_thresholds = []
+#     best_metrics = []
 
-    for i in range(classCount):
-        pred_probs = torch.sigmoid(torch.tensor(dataPRED[:, i]))
-        fpr, tpr, thresholds_i = roc_curve(dataGT[:, i], pred_probs)
+#     for i in range(classCount):
+#         pred_probs = torch.sigmoid(torch.tensor(dataPRED[:, i]))
+#         fpr, tpr, thresholds_i = roc_curve(dataGT[:, i], pred_probs)
 
-        # Grid search for threshold tuning (adjust grid range as needed)
-        grid_values = np.linspace(0, 1, 100)
-        best_metric = 0.0
-        best_threshold_i = None
-        for threshold_val in grid_values:
-            predicted = (pred_probs > threshold_val).float()
-            # Calculate chosen metric (e.g., precision, recall, F1-score)
+#         # Grid search for threshold tuning (adjust grid range as needed)
+#         grid_values = np.linspace(0, 1, 100)
+#         best_metric = 0.0
+#         best_threshold_i = None
+#         for threshold_val in grid_values:
+#             predicted = (pred_probs > threshold_val).float()
+#             # Calculate chosen metric (e.g., precision, recall, F1-score)
             
-            metric_val = f1_score(dataGT[:, i], predicted)
+#             metric_val = f1_score(dataGT[:, i], predicted)
            
-            if metric_val >= best_metric:
-                best_metric = metric_val
-                best_threshold_i = threshold_val
+#             if metric_val >= best_metric:
+#                 best_metric = metric_val
+#                 best_threshold_i = threshold_val
 
-        thresholds.append(thresholds_i)
-        best_thresholds.append(best_threshold_i)
-        best_metrics.append(best_metric)
-        print(best_thresholds)
+#         thresholds.append(thresholds_i)
+#         best_thresholds.append(best_threshold_i)
+#         best_metrics.append(best_metric)
+#     print(best_thresholds)
+#     print()
+#     return best_metrics
 
-    return best_metrics
+def computeAUROC(dataPRED, dataGT):
+    thresholds = []
+    for i in range(dataPRED.shape[1]):
+        # Tính toán ROC curve
+        pred_probs = torch.sigmoid(torch.tensor(dataPRED[:, i]))
+        fpr, tpr, threshold = roc_curve(dataGT[:, i], pred_probs)
+        # Tìm điểm trên ROC curve gần với (0,1)
+        # Có thể làm điều này bằng cách chọn điểm có giá trị (1 - TPR) nhỏ nhất
+        # và FPR thấp nhất
+        optimal_index = np.argmax(tpr - fpr)
+        optimal_threshold = threshold[optimal_index]
+        thresholds.append(optimal_threshold)
+    return thresholds
     
 # def computeAUROC(dataPRED, dataGT, classCount=14):
 
