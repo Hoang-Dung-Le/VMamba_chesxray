@@ -62,7 +62,7 @@ def load_pretrained_ema(config, model, logger, model_ema: ModelEma=None):
     if 'model' in checkpoint:
         # msg = model.load_state_dict(checkpoint['model'], strict=False)
         # logger.warning(msg)
-        print(checkpoint.keys())
+        # print(checkpoint.keys())
         checkpoint_state_dict = checkpoint['model']
         checkpoint_state_dict['classifier.head.weight'] = checkpoint_state_dict['classifier.head.weight'][:14, :]
         checkpoint_state_dict['classifier.head.bias'] = checkpoint_state_dict['classifier.head.bias'][:14]

@@ -191,9 +191,9 @@ def main(config, args):
     loss_scaler = NativeScalerWithGradNormCount()
 
     if config.TRAIN.ACCUMULATION_STEPS > 1:
-        lr_scheduler = build_scheduler(config, optimizer, len(70000) // config.TRAIN.ACCUMULATION_STEPS)
+        lr_scheduler = build_scheduler(config, optimizer, 70000) // config.TRAIN.ACCUMULATION_STEPS)
     else:
-        lr_scheduler = build_scheduler(config, optimizer, len(70000))
+        lr_scheduler = build_scheduler(config, optimizer, 70000)
 
     # if config.AUG.MIXUP > 0.:
     #     # smoothing is handled with mixup label transform
@@ -235,7 +235,7 @@ def main(config, args):
 
     if config.MODEL.PRETRAINED and (not config.MODEL.RESUME):
         model = load_pretrained_ema(config, model_without_ddp, logger, model_ema)
-        loss = validate(config, data_loader_val, model)
+        # loss = validate(config, data_loader_val, model)
         # logger.info(f"Accuracy of the network on the {len(dataset_val)} test images: {acc1:.1f}%")
         # if model_ema is not None:
         #     acc1_ema, acc5_ema, loss_ema = validate(config, data_loader_val, model_ema.ema)
