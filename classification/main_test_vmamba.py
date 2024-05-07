@@ -485,8 +485,8 @@ def predict_img(config, path_to_img, model):
 
     # Apply sigmoid activation if necessary (depending on model output)
     pred_prob = torch.sigmoid(predictions)
-
-    return pred_prob
+    print(pred_prob)
+    return
     
 
     
