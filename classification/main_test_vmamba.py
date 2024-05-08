@@ -470,9 +470,9 @@ def predict_img(config, path_to_img, model):
     # Check if GPU is available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    threshold = [0.509, 0.516, 0.571, 0.513, 0.548, 
-             0.391, 0.586, 0.593, 0.582, 0.61,  
-             0.538, 0.495, 0.439, 0.425]
+    threshold = [0.36, 0.32, 0.23, 0.22, 0.3, 
+             0.17, 0.23, 0.24, 0.12, 0.23,  
+             0.4, 0.34, 0.23, 0.34]
     list_label = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration', 
               'Mass', 'Nodule', 'Pneumonia', 'Pneumothorax', 'Consolidation',
               'Edema', 'Emphysema', 'Fibrosis', 'Pleural Thickening', 'Hernia']
