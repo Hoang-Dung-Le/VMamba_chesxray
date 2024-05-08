@@ -470,6 +470,13 @@ def predict_img(config, path_to_img, model):
     # Check if GPU is available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+    threshold = [0.509, 0.516, 0.571, 0.513, 0.548, 
+             0.391, 0.586, 0.593, 0.582, 0.61,  
+             0.538, 0.495, 0.439, 0.425]
+    list_label = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration', 
+              'Mass', 'Nodule', 'Pneumonia', 'Pneumothorax', 'Consolidation',
+              'Edema', 'Emphysema', 'Fibrosis', 'Pleural Thickening', 'Hernia']
+
     # Read and preprocess image
     image = Image.open(path_to_img).convert('RGB')
     transform = get_transform(config)
@@ -482,10 +489,18 @@ def predict_img(config, path_to_img, model):
     # Disable gradient calculation for inference
     with torch.no_grad():
         predictions = model(processed_tensor)
-
+    label_predicted = []
     # Apply sigmoid activation if necessary (depending on model output)
     pred_prob = torch.sigmoid(predictions)
-    print(pred_prob)
+    for i in range(len(pred_prob[0])):
+            if pred_prob[0][i] > threshold[i]:
+                label_predicted.append(list_label[i])
+    result = ''
+    if len(label_predicted) == 0:
+        result = 'no finding'
+    else:
+        result = label_predicted
+    print(result)
     return
     
 
