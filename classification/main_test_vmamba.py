@@ -496,6 +496,7 @@ def predict_img(config, path_to_img, model):
             if pred_prob[0][i] > threshold[i]:
                 label_predicted.append(list_label[i])
     result = ''
+    print(pred_prob)
     if len(label_predicted) == 0:
         result = 'no finding'
     else:
